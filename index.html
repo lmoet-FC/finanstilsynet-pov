@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>40 Days to Compliance | MuleSoft × Finanstilsynet</title>
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #07090F;
+      --surface:   #0D1226;
+      --card:      #111827;
+      --card-hi:   #151F38;
+      --border:    rgba(255,255,255,0.07);
+      --blue:      #00A1E0;
+      --blue-dim:  rgba(0,161,224,0.12);
+      --orange:    #FF6B35;
+      --orange-dim:rgba(255,107,53,0.12);
+      --red:       #FF4444;
+      --red-dim:   rgba(255,68,68,0.10);
+      --green:     #00D4A0;
+      --green-dim: rgba(0,212,160,0.10);
+      --text:      #F0F4FF;
+      --muted:     #7B8BB2;
+      --code-bg:   #0A1020;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── Typography ── */
+    h1, h2, h3, h4 { line-height: 1.2; font-weight: 700; }
+    h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
+    h2 { font-size: clamp(1.6rem, 4vw, 2.6rem); }
+    h3 { font-size: clamp(1.2rem, 2.5vw, 1.6rem); }
+    h4 { font-size: 1rem; font-weight: 600; }
+    p  { color: var(--muted); line-height: 1.75; }
+    strong { color: var(--text); }
+
+    .label {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+    }
+    .label-orange { background: var(--orange-dim); color: var(--orange); border: 1px solid var(--orange); }
+    .label-blue   { background: var(--blue-dim);   color: var(--blue);   border: 1px solid var(--blue);   }
+    .label-red    { background: var(--red-dim);     color: var(--red);    border: 1px solid var(--red);    }
+    .label-green  { background: var(--green-dim);   color: var(--green);  border: 1px solid var(--green);  }
+
+    /* ── Layout ── */
+    .section {
+      padding: clamp(4rem, 8vh, 7rem) clamp(1.5rem, 6vw, 6rem);
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .section-full {
+      padding: clamp(4rem, 8vh, 7rem) clamp(1.5rem, 6vw, 6rem);
+    }
+
+    /* ── Sticky Nav Bar ── */
+    #topbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(7,9,15,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.6rem 2rem;
+      gap: 1rem;
+    }
+    .topbar-brand {
+      font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em;
+      color: var(--blue); text-transform: uppercase;
+    }
+    #live-deadline {
+      font-family: 'Courier New', monospace;
+      font-size: 0.8rem;
+      color: var(--orange);
+      background: var(--orange-dim);
+      border: 1px solid var(--orange);
+      padding: 4px 12px; border-radius: 4px;
+      white-space: nowrap;
+    }
+    .topbar-cta {
+      background: var(--blue);
+      color: #fff;
+      border: none; border-radius: 6px;
+      padding: 6px 16px; font-size: 0.78rem; font-weight: 700;
+      cursor: pointer; text-decoration: none;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .topbar-cta:hover { background: #0089c0; }
+
+    /* ── Hero ── */
+    #hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 8rem clamp(1.5rem, 6vw, 6rem) 5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+    @media (max-width: 720px) {
+      .hero-grid { grid-template-columns: 1fr; }
+    }
+
+    .hero-eyebrow {
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--orange);
+      margin-bottom: 1rem;
+    }
+    .hero-headline { margin-bottom: 1.5rem; }
+    .hero-headline em { color: var(--blue); font-style: normal; }
+    .hero-sub { font-size: 1.05rem; margin-bottom: 2rem; }
+    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--blue);
+      color: #fff; border: none; border-radius: 8px;
+      padding: 14px 28px; font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; text-decoration: none;
+      display: inline-block; transition: all 0.2s;
+    }
+    .btn-primary:hover { background: #0089c0; transform: translateY(-2px); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text); border: 1px solid var(--border); border-radius: 8px;
+      padding: 14px 28px; font-size: 0.95rem; font-weight: 600;
+      cursor: pointer; text-decoration: none;
+      display: inline-block; transition: all 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--blue); color: var(--blue); }
+
+    /* Countdown Clock */
+    .clock-widget {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+    }
+    .clock-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--orange);
+      margin-bottom: 0.5rem;
+    }
+    .clock-title {
+      font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem;
+    }
+    .clock-digits {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem;
+    }
+    .clock-unit { text-align: center; }
+    .clock-num {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      color: var(--orange);
+      line-height: 1;
+      display: block;
+      font-family: 'Courier New', monospace;
+    }
+    .clock-unit-label {
+      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted); margin-top: 4px;
+    }
+    .clock-divider {
+      font-size: 2rem; color: var(--orange); opacity: 0.4;
+      display: flex; align-items: center; padding-bottom: 0.5rem;
+    }
+    .clock-footer {
+      margin-top: 1.5rem;
+      font-size: 0.75rem; color: var(--muted);
+      padding-top: 1rem; border-top: 1px solid var(--border);
+    }
+    .clock-footer strong { color: var(--red); }
+
+    /* Deadline pulse dot */
+    .pulse-dot {
+      display: inline-block; width: 8px; height: 8px;
+      border-radius: 50%; background: var(--red);
+      margin-right: 6px; vertical-align: middle;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(255,68,68,0.6); }
+      70%  { box-shadow: 0 0 0 8px rgba(255,68,68,0); }
+      100% { box-shadow: 0 0 0 0 rgba(255,68,68,0); }
+    }
+
+    /* ── Divider ── */
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 0 clamp(1.5rem, 6vw, 6rem);
+    }
+
+    /* ── Stat Bar ── */
+    .stat-bar {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .stat-bar-inner {
+      max-width: 1100px; margin: 0 auto;
+      padding: 1.5rem clamp(1.5rem, 6vw, 6rem);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.5rem;
+    }
+    .stat-item { text-align: center; }
+    .stat-num {
+      font-size: 2rem; font-weight: 800; color: var(--blue);
+      font-variant-numeric: tabular-nums;
+    }
+    .stat-desc { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+
+    /* ── Comparison Table ── */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+    @media (max-width: 680px) { .compare-grid { grid-template-columns: 1fr; } }
+    .compare-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem;
+    }
+    .compare-card.danger { border-color: rgba(255,68,68,0.3); }
+    .compare-card.safe   { border-color: rgba(0,161,224,0.3); }
+    .compare-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 1.25rem;
+    }
+    .compare-icon {
+      width: 36px; height: 36px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .compare-icon.red { background: var(--red-dim); }
+    .compare-icon.blue { background: var(--blue-dim); }
+    .compare-title { font-size: 0.9rem; font-weight: 700; }
+    .compare-sub   { font-size: 0.72rem; color: var(--muted); }
+    .compare-list  { list-style: none; }
+    .compare-list li {
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem; color: var(--muted);
+      display: flex; gap: 10px;
+    }
+    .compare-list li:last-child { border-bottom: none; }
+    .compare-list li .icon-neg { color: var(--red); flex-shrink: 0; }
+    .compare-list li .icon-pos { color: var(--green); flex-shrink: 0; }
+
+    .aha-box {
+      margin-top: 2rem;
+      background: var(--orange-dim);
+      border: 1px solid rgba(255,107,53,0.4);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      display: flex; gap: 1rem; align-items: flex-start;
+    }
+    .aha-icon { font-size: 1.5rem; flex-shrink: 0; }
+    .aha-text { font-size: 0.88rem; color: var(--text); }
+
+    /* ── Code Block ── */
+    .code-section {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .dw-demo {
+      margin-top: 2.5rem;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 1rem;
+      align-items: start;
+    }
+    @media (max-width: 820px) {
+      .dw-demo { grid-template-columns: 1fr; }
+      .dw-arrow { display: none; }
+    }
+    .code-pane {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .code-pane-header {
+      background: rgba(255,255,255,0.04);
+      padding: 8px 14px;
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .code-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .code-body {
+      padding: 1.25rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.78rem;
+      line-height: 1.7;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .dw-arrow {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding-top: 3rem; color: var(--blue);
+      font-size: 1.5rem;
+    }
+    .dw-arrow-label { font-size: 0.65rem; color: var(--muted); margin-top: 4px; text-align: center; }
+
+    .kw  { color: #C792EA; }
+    .fn  { color: #82AAFF; }
+    .str { color: #C3E88D; }
+    .num { color: #F78C6C; }
+    .cmt { color: #546E7A; font-style: italic; }
+    .tag { color: #89DDFF; }
+    .attr{ color: #FFCB6B; }
+    .val { color: #C3E88D; }
+
+    .dw-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    @media (max-width: 680px) { .dw-steps { grid-template-columns: 1fr; } }
+    .dw-step {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+    }
+    .dw-step-num {
+      font-size: 0.7rem; font-weight: 700; color: var(--blue);
+      letter-spacing: 0.1em; margin-bottom: 0.5rem;
+    }
+    .dw-step h4 { margin-bottom: 0.4rem; }
+    .dw-step p  { font-size: 0.82rem; }
+
+    /* ── Timeline ── */
+    .timeline {
+      margin-top: 2.5rem;
+      position: relative;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute; top: 24px; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--blue), var(--green));
+    }
+    .timeline-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      position: relative;
+    }
+    @media (max-width: 700px) {
+      .timeline::before { display: none; }
+      .timeline-grid { grid-template-columns: 1fr 1fr; }
+    }
+    .timeline-item { padding-top: 2.5rem; }
+    .timeline-dot {
+      position: absolute;
+      top: 16px;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      border: 2px solid var(--bg);
+      z-index: 1;
+    }
+    .tl-phase {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--blue); margin-bottom: 4px;
+    }
+    .tl-title { font-size: 0.88rem; font-weight: 700; margin-bottom: 4px; }
+    .tl-desc  { font-size: 0.78rem; color: var(--muted); }
+    .tl-day   {
+      display: inline-block; font-size: 0.7rem; font-weight: 700;
+      background: var(--blue-dim); color: var(--blue);
+      border: 1px solid var(--blue); border-radius: 4px;
+      padding: 2px 8px; margin-bottom: 8px;
+    }
+
+    /* ── CTA Section ── */
+    .cta-section {
+      background: linear-gradient(135deg, rgba(0,161,224,0.08) 0%, rgba(0,212,160,0.05) 100%);
+      border-top: 1px solid rgba(0,161,224,0.2);
+      border-bottom: 1px solid rgba(0,161,224,0.2);
+    }
+    .cta-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: clamp(4rem, 8vh, 7rem) clamp(1.5rem, 6vw, 6rem);
+      text-align: center;
+    }
+    .cta-headline { margin-bottom: 1rem; }
+    .cta-sub { font-size: 1rem; margin-bottom: 2.5rem; }
+    .cta-offer {
+      background: var(--card);
+      border: 1px solid rgba(0,161,224,0.25);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      text-align: left;
+    }
+    .cta-offer-title {
+      font-size: 1rem; font-weight: 700; color: var(--blue);
+      margin-bottom: 0.75rem; display: flex; align-items: center; gap: 8px;
+    }
+    .cta-offer-list { list-style: none; }
+    .cta-offer-list li {
+      padding: 0.5rem 0; font-size: 0.88rem; color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      display: flex; gap: 10px;
+    }
+    .cta-offer-list li:last-child { border-bottom: none; }
+    .check { color: var(--green); flex-shrink: 0; }
+    .cta-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--blue), #0089c0);
+      color: #fff; border: none; border-radius: 10px;
+      padding: 18px 42px; font-size: 1rem; font-weight: 700;
+      cursor: pointer; text-decoration: none;
+      transition: all 0.2s;
+      box-shadow: 0 0 40px rgba(0,161,224,0.3);
+    }
+    .cta-btn:hover { transform: translateY(-3px); box-shadow: 0 0 60px rgba(0,161,224,0.5); }
+    .cta-footnote { font-size: 0.78rem; color: var(--muted); margin-top: 1.5rem; }
+
+    /* ── Footer ── */
+    footer {
+      padding: 2.5rem clamp(1.5rem, 6vw, 6rem);
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-brand { font-size: 0.8rem; font-weight: 700; color: var(--blue); }
+    .footer-trust {
+      font-size: 0.75rem; color: var(--muted); text-align: right;
+    }
+
+    /* ── Risk Banner ── */
+    .risk-banner {
+      background: var(--red-dim);
+      border: 1px solid rgba(255,68,68,0.3);
+      border-radius: 10px;
+      padding: 1rem 1.5rem;
+      margin-bottom: 3rem;
+      display: flex; gap: 12px; align-items: flex-start;
+    }
+    .risk-banner-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
+    .risk-banner-text { font-size: 0.85rem; color: var(--text); }
+    .risk-banner-text strong { color: var(--red); }
+
+    /* ── Section header helper ── */
+    .section-header { margin-bottom: 2.5rem; }
+
+    /* Animations */
+    .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- ─────────────────────────────── TOP BAR ─────────────────────────────── -->
+<nav id="topbar">
+  <div class="topbar-brand">MuleSoft × Finanstilsynet</div>
+  <div id="live-deadline">Loading…</div>
+  <a href="#cta" class="topbar-cta">Book a Free Consultation →</a>
+</nav>
+
+
+<!-- ─────────────────────────────── HERO ─────────────────────────────── -->
+<section id="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="hero-eyebrow"><span class="pulse-dot"></span>Compliance Deadline Alert · Norway</div>
+      <h1 class="hero-headline">
+        June 30th.<br>
+        <em>Finanstilsynet</em> goes XML-only.<br>
+        Is your stack ready?
+      </h1>
+      <p class="hero-sub">
+        Altinn II is shutting down. Manual reporting ends. From July 1st,
+        the only accepted format is <strong>ESMA Revision 6 XML</strong> —
+        and silent rejections leave no paper trail with the regulator except a fine that arrives a few days later.
+      </p>
+      <div class="hero-actions">
+        <a href="#cta" class="btn-primary">Book a Free Consultation</a>
+        <a href="#how" class="btn-ghost">See How It Works</a>
+      </div>
+    </div>
+    <div>
+      <div class="clock-widget">
+        <div class="clock-label"><span class="pulse-dot"></span>Live Countdown</div>
+        <div class="clock-title">Finanstilsynet XML Mandate · June 30, 2026</div>
+        <div class="clock-digits">
+          <div class="clock-unit">
+            <span class="clock-num" id="c-days">--</span>
+            <div class="clock-unit-label">Days</div>
+          </div>
+          <div class="clock-divider">:</div>
+          <div class="clock-unit">
+            <span class="clock-num" id="c-hours">--</span>
+            <div class="clock-unit-label">Hours</div>
+          </div>
+          <div class="clock-divider">:</div>
+          <div class="clock-unit">
+            <span class="clock-num" id="c-mins">--</span>
+            <div class="clock-unit-label">Minutes</div>
+          </div>
+          <div class="clock-divider">:</div>
+          <div class="clock-unit">
+            <span class="clock-num" id="c-secs">--</span>
+            <div class="clock-unit-label">Seconds</div>
+          </div>
+        </div>
+        <div class="clock-footer">
+          <strong>⚠ Non-compliant submissions are silently rejected.</strong><br>
+          Finanstilsynet does not send error notifications — your firm will simply
+          be marked non-compliant.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ─────────────────────────────── STAT BAR ─────────────────────────────── -->
+<div class="stat-bar">
+  <div class="stat-bar-inner">
+    <div class="stat-item">
+      <div class="stat-num">June 30</div>
+      <div class="stat-desc">Hard cutoff — Altinn II portal gone</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">Rev. 6</div>
+      <div class="stat-desc">ESMA XML schema version required</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">100%</div>
+      <div class="stat-desc">XSD validation — zero tolerance for drift</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">14 days</div>
+      <div class="stat-desc">Realistic delivery window with MuleSoft</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────── SECTION 2: TRAP ─────────────────────────────── -->
+<div class="section fade-in">
+  <div class="section-header">
+    <span class="label label-red">⚠ The Hard-Coding Trap</span>
+    <h2>Your current Plan A has a<br>structural flaw.</h2>
+    <p style="max-width:640px; margin-top:1rem;">
+      Most Norwegian asset managers and investment firms are currently solving this one of two ways. Both carry hidden risk that won't surface until the regulator's validation engine rejects you — silently.
+    </p>
+  </div>
+
+  <div class="risk-banner">
+    <div class="risk-banner-icon">🔴</div>
+    <div class="risk-banner-text">
+      <strong>The Silent Rejection Problem:</strong> Unlike legacy Altinn II,
+      Altinn 3 does not return human-readable error messages. A schema mismatch on
+      a nested <code style="background:rgba(255,255,255,0.1);padding:2px 5px;border-radius:3px">portfolioComposition</code> element
+      results in a status code, not a correction notice. Your compliance officer
+      will not know until audit time.
+    </div>
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-card danger">
+      <div class="compare-header">
+        <div class="compare-icon red">⚠️</div>
+        <div>
+          <div class="compare-title">Plan A: The DIY Script</div>
+          <div class="compare-sub">Python / XSLT / Excel macros</div>
+        </div>
+      </div>
+      <ul class="compare-list">
+        <li><span class="icon-neg">✗</span> Hard-coded against Rev. 6 — will break when ESMA publishes Rev. 7 in 2027</li>
+        <li><span class="icon-neg">✗</span> No built-in XSD validation — errors surface post-submission</li>
+        <li><span class="icon-neg">✗</span> Single developer owns the logic — key-person dependency</li>
+        <li><span class="icon-neg">✗</span> No audit trail for field-level mapping decisions</li>
+        <li><span class="icon-neg">✗</span> Manual re-runs each reporting cycle</li>
+        <li><span class="icon-neg">✗</span> NIS2 and FIDA requirements (2026–27) require a full rewrite</li>
+      </ul>
+    </div>
+    <div class="compare-card safe">
+      <div class="compare-header">
+        <div class="compare-icon blue">✅</div>
+        <div>
+          <div class="compare-title">Plan B: The MuleSoft Gateway</div>
+          <div class="compare-sub">Anypoint + DataWeave + Validation</div>
+        </div>
+      </div>
+      <ul class="compare-list">
+        <li><span class="icon-pos">✓</span> Schema-driven — swap in the new XSD without touching your data sources</li>
+        <li><span class="icon-pos">✓</span> Validates against the XSD <em>before</em> calling Altinn — zero silent failures</li>
+        <li><span class="icon-pos">✓</span> Visual mapping canvas — auditable by compliance, not just engineers</li>
+        <li><span class="icon-pos">✓</span> Full execution log per submission for regulatory evidence</li>
+        <li><span class="icon-pos">✓</span> Scheduled, automated — zero manual intervention per cycle</li>
+        <li><span class="icon-pos">✓</span> NIS2 / FIDA ready — same platform, new flow</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha-box">
+    <div class="aha-icon">💡</div>
+    <div class="aha-text">
+      <strong>The 2027 Problem:</strong> ESMA regulations are living documents. If you hard-code the law today,
+      you face a full backend rewrite when Revision 7 drops — likely mid-2027. A schema-driven approach means
+      the update takes hours, not weeks. The difference compounds every regulatory cycle.
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────── SECTION 3: HOW IT WORKS ─────────────────────────────── -->
+<div class="section-divider"></div>
+<div class="code-section" id="how">
+  <div class="section fade-in" style="padding-top: clamp(3rem,6vh,5rem); padding-bottom: clamp(3rem,6vh,5rem);">
+    <div class="section-header">
+      <span class="label label-blue">⚙ The Engine</span>
+      <h2>DataWeave: your universal<br>translator for compliance XML.</h2>
+      <p style="max-width:600px; margin-top:1rem;">
+        DataWeave is not middleware boilerplate. It is a purpose-built transformation
+        language that reads the XSD as law and validates your data against it
+        before a single byte reaches Altinn 3.
+      </p>
+    </div>
+
+    <div class="dw-steps">
+      <div class="dw-step">
+        <div class="dw-step-num">Step 01</div>
+        <h4>Ingest the XSD</h4>
+        <p>The Finanstilsynet ESMA Rev. 6 schema becomes your contract. DataWeave reads it natively — no manual parsing.</p>
+      </div>
+      <div class="dw-step">
+        <div class="dw-step-num">Step 02</div>
+        <h4>Map Your Data</h4>
+        <p>SQL tables, CSV exports, or API feeds. The visual canvas maps your fields to the schema with type-safety enforced at design time.</p>
+      </div>
+      <div class="dw-step">
+        <div class="dw-step-num">Step 03</div>
+        <h4>Validate + Submit</h4>
+        <p>Generates 100% compliant XML output and validates against the XSD in the same step. Failures are caught in your system, not by Finanstilsynet.</p>
+      </div>
+    </div>
+
+    <!-- Code Demo -->
+    <div class="dw-demo">
+      <div class="code-pane">
+        <div class="code-pane-header">
+          <div class="code-dot" style="background:#FF5F56"></div>
+          <div class="code-dot" style="background:#FFBD2E"></div>
+          <div class="code-dot" style="background:#27C93F"></div>
+          &nbsp;Your Internal Data (SQL / CSV)
+        </div>
+        <div class="code-body"><span class="cmt">// Raw fund data from your OMS</span>
+{
+  <span class="attr">"fund_id"</span>:        <span class="str">"NO-AIF-00442"</span>,
+  <span class="attr">"fund_name"</span>:      <span class="str">"Nordic Credit Fund IV"</span>,
+  <span class="attr">"nav_eur"</span>:        <span class="num">847293100.00</span>,
+  <span class="attr">"reporting_dt"</span>:   <span class="str">"2026-06-30"</span>,
+  <span class="attr">"investor_count"</span>: <span class="num">38</span>,
+  <span class="attr">"strategy_code"</span>:  <span class="str">"DEBT"</span>,
+  <span class="attr">"leverage_pct"</span>:   <span class="num">1.42</span>,
+  <span class="attr">"domicile"</span>:       <span class="str">"NO"</span>
+}</div>
+      </div>
+
+      <div class="dw-arrow">
+        <div style="font-size:2rem">→</div>
+        <div class="dw-arrow-label">DataWeave<br>Transform</div>
+      </div>
+
+      <div class="code-pane">
+        <div class="code-pane-header">
+          <div class="code-dot" style="background:#FF5F56"></div>
+          <div class="code-dot" style="background:#FFBD2E"></div>
+          <div class="code-dot" style="background:#27C93F"></div>
+          &nbsp;ESMA Rev. 6 XML Output (Altinn 3)
+        </div>
+        <div class="code-body"><span class="tag">&lt;?xml</span> <span class="attr">version</span>=<span class="val">"1.0"</span> <span class="attr">encoding</span>=<span class="val">"UTF-8"</span><span class="tag">?&gt;</span>
+<span class="tag">&lt;AIFMReportingInfo</span>
+  <span class="attr">xmlns</span>=<span class="val">"urn:esma:aifmd:xsd:r6"</span>
+  <span class="attr">CreationDateAndTime</span>=<span class="val">"2026-06-30T08:00:00"</span>
+  <span class="attr">Version</span>=<span class="val">"600"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;AIFMRecordInfo&gt;</span>
+    <span class="tag">&lt;AIFMIdentificationCode&gt;</span>
+      <span class="val">529900NO-AIF-00442X</span>
+    <span class="tag">&lt;/AIFMIdentificationCode&gt;</span>
+    <span class="tag">&lt;AIFMNationalCode&gt;</span><span class="val">NO-AIF-00442</span><span class="tag">&lt;/AIFMNationalCode&gt;</span>
+    <span class="tag">&lt;AIFMName&gt;</span><span class="val">Nordic Credit Fund IV</span><span class="tag">&lt;/AIFMName&gt;</span>
+    <span class="tag">&lt;ReportingPeriod&gt;</span>
+      <span class="tag">&lt;EndOfReportingPeriod&gt;</span><span class="val">2026-06-30</span><span class="tag">&lt;/EndOfReportingPeriod&gt;</span>
+    <span class="tag">&lt;/ReportingPeriod&gt;</span>
+    <span class="tag">&lt;NetAssetValue&gt;</span><span class="val">847293100.00</span><span class="tag">&lt;/NetAssetValue&gt;</span>
+    <span class="tag">&lt;FundLeverageRatio&gt;</span><span class="val">1.42</span><span class="tag">&lt;/FundLeverageRatio&gt;</span>
+  <span class="tag">&lt;/AIFMRecordInfo&gt;</span>
+<span class="tag">&lt;/AIFMReportingInfo&gt;</span>
+<span class="cmt">&lt;!-- ✓ XSD validated · 0 schema errors · Ready for Altinn 3 --&gt;</span></div>
+      </div>
+    </div>
+
+    <div class="aha-box" style="margin-top:2rem; background: var(--green-dim); border-color: rgba(0,212,160,0.3);">
+      <div class="aha-icon">✅</div>
+      <div class="aha-text">
+        <strong>Pre-flight validation</strong> catches missing mandatory fields, wrong data types, and incorrect
+        namespace declarations <em>before</em> submission. Your compliance officer sees a green light,
+        not a rejection code from Finanstilsynet three days later.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────── SECTION 4: SPRINT ─────────────────────────────── -->
+<div class="section fade-in">
+  <div class="section-header">
+    <span class="label label-orange">🚀 The Sprint Plan</span>
+    <h2>14 days from kickoff<br>to live submission.</h2>
+    <p style="max-width:600px; margin-top:1rem;">
+      We do not need to rebuild your architecture. We need to build your
+      <strong>Regulatory Bridge</strong> — a dedicated integration flow that
+      sits between your existing data and Altinn 3. This is a focused, tactical delivery.
+    </p>
+  </div>
+
+  <div class="timeline">
+    <div class="timeline-grid">
+      <div class="timeline-item">
+        <div class="tl-day">Day 1–2</div>
+        <div class="tl-phase">Phase 01</div>
+        <div class="tl-title">Data Archaeology</div>
+        <div class="tl-desc">Map your Annex IV data to its sources. Identify gaps, quality issues, and ownership. No surprises downstream.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-day">Day 3–7</div>
+        <div class="tl-phase">Phase 02</div>
+        <div class="tl-title">The Mapping Sprint</div>
+        <div class="tl-desc">DataWeave aligns your source fields to the ESMA Rev. 6 XSD. Visual mappings reviewed by compliance, not just engineering.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-day">Day 8–12</div>
+        <div class="tl-phase">Phase 03</div>
+        <div class="tl-title">Validation Loop</div>
+        <div class="tl-desc">Dry-run submissions to the Altinn 3 test environment. All schema errors resolved. Evidence package compiled for your regulator.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-day">Day 14</div>
+        <div class="tl-phase">Phase 04 ✓</div>
+        <div class="tl-title">Go-Live</div>
+        <div class="tl-desc">First live submission to Finanstilsynet via Altinn 3. Scheduled automation active. Your compliance team can stop holding their breath.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="aha-box" style="margin-top:2.5rem;">
+    <div class="aha-icon">🏗</div>
+    <div class="aha-text">
+      <strong>This is a Trojan Horse (the good kind):</strong> Once we solve Finanstilsynet,
+      you have a live integration platform. NIS2 incident reporting, FIDA open finance data-sharing,
+      and the next Altinn migration all run on the same foundation.
+      You've paid for the bridge once — every future regulation crosses it for free.
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────── CTA ─────────────────────────────── -->
+<div class="cta-section" id="cta">
+  <div class="cta-inner">
+    <span class="label label-blue">🛡 Let's Talk</span>
+    <h2 class="cta-headline">
+      30 minutes to understand<br>your options.
+    </h2>
+    <p class="cta-sub">
+      Every firm's data landscape is different. Let's have a no-pressure conversation
+      about where you are today, what the June 30th mandate means for your specific
+      reporting setup, and what a realistic path to compliance looks like.
+      No slides. No pitch deck. Just a direct conversation.
+    </p>
+
+    <div class="cta-offer">
+      <div class="cta-offer-title">💬 The Free Compliance Consultation</div>
+      <ul class="cta-offer-list">
+        <li><span class="check">✓</span> We assess your current reporting setup and identify the real risk</li>
+        <li><span class="check">✓</span> We walk through what a MuleSoft integration would actually look like for your firm</li>
+        <li><span class="check">✓</span> You leave with a clear picture of effort, timeline, and cost — no ambiguity</li>
+        <li><span class="check">✓</span> We cover what comes after June 30th: NIS2, FIDA, and the next Altinn migration</li>
+        <li><span class="check">✓</span> Zero commitment — if MuleSoft isn't the right fit, we'll tell you</li>
+      </ul>
+    </div>
+
+    <a href="mailto:lmoet@salesforce.com?subject=Finanstilsynet%20Compliance%20Consultation&body=Hi%20Laurens%2C%0A%0AI%27d%20like%20to%20book%20a%20consultation%20on%20our%20Finanstilsynet%20XML%20reporting%20options.%0A%0ACompany%3A%20%0AContact%3A%20%0A"
+       class="cta-btn">
+      Book a Free Consultation →
+    </a>
+
+    <p class="cta-footnote">
+      Trusted by the world's most regulated financial institutions to turn compliance complexity into operational confidence.<br>
+      Questions? Reply directly to this message or connect with <strong>Laurens Moet</strong> · MuleSoft Solutions Engineer, Norway.
+    </p>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────── FOOTER ─────────────────────────────── -->
+<footer>
+  <div>
+    <div class="footer-brand">MuleSoft · A Salesforce Company</div>
+    <div style="font-size:0.72rem; color:var(--muted); margin-top:4px;">
+      Finanstilsynet Compliance · Altinn 3 Integration · ESMA Rev. 6 XML · Norway
+    </div>
+  </div>
+  <div class="footer-trust">
+    Deadline: <strong style="color:var(--orange)">June 30, 2026</strong><br>
+    <span style="font-size:0.7rem">Altinn II retirement · ESMA XML mandate effective</span>
+  </div>
+</footer>
+
+
+<!-- ─────────────────────────────── SCRIPTS ─────────────────────────────── -->
+<script>
+  // ── Countdown Clock ──
+  const DEADLINE = new Date('2026-06-30T23:59:59+02:00');
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function updateClock() {
+    const now  = new Date();
+    const diff = DEADLINE - now;
+
+    if (diff <= 0) {
+      document.getElementById('c-days').textContent  = '00';
+      document.getElementById('c-hours').textContent = '00';
+      document.getElementById('c-mins').textContent  = '00';
+      document.getElementById('c-secs').textContent  = '00';
+      document.getElementById('live-deadline').textContent = '⚠ DEADLINE PASSED';
+      return;
+    }
+
+    const days  = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const mins  = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const secs  = Math.floor((diff % (1000 * 60)) / 1000);
+
+    document.getElementById('c-days').textContent  = pad(days);
+    document.getElementById('c-hours').textContent = pad(hours);
+    document.getElementById('c-mins').textContent  = pad(mins);
+    document.getElementById('c-secs').textContent  = pad(secs);
+    document.getElementById('live-deadline').textContent =
+      `⏱ ${days}d ${pad(hours)}h ${pad(mins)}m to June 30`;
+  }
+
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // ── Fade-in on scroll ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
